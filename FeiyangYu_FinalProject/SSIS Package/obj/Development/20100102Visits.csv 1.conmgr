@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<DTS:ConnectionManager xmlns:DTS="www.microsoft.com/SqlServer/Dts"
+  DTS:ObjectName="20100102Visits.csv 1"
+  DTS:DTSID="{37C0B43F-93C6-4228-A2A0-B1CD3A358E3E}"
+  DTS:CreationName="FILE">
+  <DTS:ObjectData>
+    <DTS:ConnectionManager
+      DTS:ConnectionString="C:\Users\roger\Desktop\Info 498 Final\DataFiles\Kirkland\20100102Visits.csv" />
+  </DTS:ObjectData>
+</DTS:ConnectionManager>

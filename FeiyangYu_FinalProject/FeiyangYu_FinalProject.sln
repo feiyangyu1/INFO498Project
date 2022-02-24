@@ -1,0 +1,68 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.757
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{159641D6-6404-4A2A-AE62-294DE0FE8301}") = "SSIS Package", "SSIS Package\SSIS Package.dtproj", "{664C34F8-E9B2-4510-AAB4-80B080F35CFA}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SQLCode", "SQLCode", "{4F3E941A-94DF-42C4-BF0D-948A29F714BF}"
+	ProjectSection(SolutionItems) = preProject
+		..\Info 498 Final\SQLCode\Backup Final Databases Job Script.sql = ..\Info 498 Final\SQLCode\Backup Final Databases Job Script.sql
+		..\Info 498 Final\SQLCode\File To OLTP Database ETL Script.sql = ..\Info 498 Final\SQLCode\File To OLTP Database ETL Script.sql
+		..\Info 498 Final\SQLCode\OLTP To DW Database ETL Script.sql = ..\Info 498 Final\SQLCode\OLTP To DW Database ETL Script.sql
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DataFiles", "DataFiles", "{3023B051-192C-4ED8-8B1E-27512A25E30B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Bellevue", "Bellevue", "{0804AC50-52C4-4D07-BF14-2FAC9313A800}"
+	ProjectSection(SolutionItems) = preProject
+		..\Info 498 Final\DataFiles\Bellevue\20100102Visits.csv = ..\Info 498 Final\DataFiles\Bellevue\20100102Visits.csv
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Redmond", "Redmond", "{D3A03769-EA01-4AA8-8284-179D7028589A}"
+	ProjectSection(SolutionItems) = preProject
+		..\Info 498 Final\DataFiles\Redmond\20100102Visits.csv = ..\Info 498 Final\DataFiles\Redmond\20100102Visits.csv
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Kirkland", "Kirkland", "{421B2FB9-776B-484D-B714-1065B6932CEB}"
+	ProjectSection(SolutionItems) = preProject
+		..\Info 498 Final\DataFiles\Kirkland\20100102Visits.csv = ..\Info 498 Final\DataFiles\Kirkland\20100102Visits.csv
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Databases", "Databases", "{E1C3490B-9F1B-4C28-B066-AA79A516D5AD}"
+	ProjectSection(SolutionItems) = preProject
+		..\Create DWClinicReportData.sql = ..\Create DWClinicReportData.sql
+		..\DoctorsSchedules.mdf = ..\DoctorsSchedules.mdf
+		..\Patients.mdf = ..\Patients.mdf
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documents", "Documents", "{45A6E5B2-3B0F-46C0-B3D4-F92DCDBC711E}"
+	ProjectSection(SolutionItems) = preProject
+		..\BISolutionWorksheets.xlsx = ..\BISolutionWorksheets.xlsx
+		..\Final Checklist.xlsx = ..\Final Checklist.xlsx
+		..\Final.pptx = ..\Final.pptx
+		..\INFO 498 Final.doc = ..\INFO 498 Final.doc
+		..\Lessons learned.docx = ..\Lessons learned.docx
+		..\Technical Overview.docx = ..\Technical Overview.docx
+	EndProjectSection
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Development|Default = Development|Default
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{664C34F8-E9B2-4510-AAB4-80B080F35CFA}.Development|Default.ActiveCfg = Development
+		{664C34F8-E9B2-4510-AAB4-80B080F35CFA}.Development|Default.Build.0 = Development
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{0804AC50-52C4-4D07-BF14-2FAC9313A800} = {3023B051-192C-4ED8-8B1E-27512A25E30B}
+		{D3A03769-EA01-4AA8-8284-179D7028589A} = {3023B051-192C-4ED8-8B1E-27512A25E30B}
+		{421B2FB9-776B-484D-B714-1065B6932CEB} = {3023B051-192C-4ED8-8B1E-27512A25E30B}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {3B0D43C7-3BFE-4060-8B5F-DF2B4CA64A09}
+	EndGlobalSection
+EndGlobal

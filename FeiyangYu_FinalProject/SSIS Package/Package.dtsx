@@ -1,0 +1,965 @@
+﻿<?xml version="1.0"?>
+<DTS:Executable xmlns:DTS="www.microsoft.com/SqlServer/Dts"
+  DTS:refId="Package"
+  DTS:CreationDate="8/23/2019 12:05:21 PM"
+  DTS:CreationName="Microsoft.Package"
+  DTS:CreatorComputerName="DESKTOP-PDSNQC5"
+  DTS:CreatorName="DESKTOP-PDSNQC5\roger"
+  DTS:DTSID="{91CECBF2-AB66-4367-8B33-D9B08D517428}"
+  DTS:ExecutableType="Microsoft.Package"
+  DTS:LastModifiedProductVersion="15.0.1301.433"
+  DTS:LocaleID="1033"
+  DTS:ObjectName="Package"
+  DTS:PackageType="5"
+  DTS:VersionBuild="21"
+  DTS:VersionGUID="{A97BDC67-24E0-4EB3-A974-8E5E887F3EAB}">
+  <DTS:Property
+    DTS:Name="PackageFormatVersion">8</DTS:Property>
+  <DTS:ConnectionManagers>
+    <DTS:ConnectionManager
+      DTS:refId="Package.ConnectionManagers[DESKTOP-PDSNQC5]"
+      DTS:CreationName="OLEDB"
+      DTS:DTSID="{0B535F9B-0850-4CFE-ADFB-E35FE384C191}"
+      DTS:ObjectName="DESKTOP-PDSNQC5">
+      <DTS:ObjectData>
+        <DTS:ConnectionManager
+          DTS:ConnectionString="Data Source=DESKTOP-PDSNQC5;Provider=SQLNCLI11.1;Integrated Security=SSPI;Auto Translate=False;" />
+      </DTS:ObjectData>
+    </DTS:ConnectionManager>
+    <DTS:ConnectionManager
+      DTS:refId="Package.ConnectionManagers[DESKTOP-PDSNQC5.Patients]"
+      DTS:CreationName="OLEDB"
+      DTS:DTSID="{959948F8-4D5F-41AE-A0F2-A5FD0AAEE4B1}"
+      DTS:ObjectName="DESKTOP-PDSNQC5.Patients">
+      <DTS:ObjectData>
+        <DTS:ConnectionManager
+          DTS:ConnectionString="Data Source=DESKTOP-PDSNQC5;Initial Catalog=Patients;Provider=SQLNCLI11.1;Integrated Security=SSPI;Auto Translate=False;" />
+      </DTS:ObjectData>
+    </DTS:ConnectionManager>
+    <DTS:ConnectionManager
+      DTS:refId="Package.ConnectionManagers[localhost.DWClinicReportData]"
+      DTS:CreationName="OLEDB"
+      DTS:DTSID="{A4D41E7A-78F4-4962-BF5B-8D4D1D753EEC}"
+      DTS:ObjectName="localhost.DWClinicReportData">
+      <DTS:ObjectData>
+        <DTS:ConnectionManager
+          DTS:ConnectionString="Data Source=localhost;Initial Catalog=DWClinicReportData;Provider=SQLNCLI11.1;Integrated Security=SSPI;Auto Translate=False;" />
+      </DTS:ObjectData>
+    </DTS:ConnectionManager>
+    <DTS:ConnectionManager
+      DTS:refId="Package.ConnectionManagers[localhost.Patients]"
+      DTS:CreationName="OLEDB"
+      DTS:DTSID="{DAD8B678-B8B4-4619-9ED9-952B9B3B7A1F}"
+      DTS:ObjectName="localhost.Patients">
+      <DTS:ObjectData>
+        <DTS:ConnectionManager
+          DTS:ConnectionString="Data Source=localhost;Initial Catalog=Patients;Provider=SQLNCLI11.1;Integrated Security=SSPI;Auto Translate=False;" />
+      </DTS:ObjectData>
+    </DTS:ConnectionManager>
+  </DTS:ConnectionManagers>
+  <DTS:Variables />
+  <DTS:Executables>
+    <DTS:Executable
+      DTS:refId="Package\CSV TO OLTP Sequence Container"
+      DTS:CreationName="STOCK:SEQUENCE"
+      DTS:Description="Sequence Container"
+      DTS:DTSID="{53FA073D-3908-4590-A6F1-D2881564B0D0}"
+      DTS:ExecutableType="STOCK:SEQUENCE"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="CSV TO OLTP Sequence Container">
+      <DTS:Variables />
+      <DTS:Executables>
+        <DTS:Executable
+          DTS:refId="Package\CSV TO OLTP Sequence Container\Create New Visit Data View Task"
+          DTS:CreationName="Microsoft.ExecuteSQLTask"
+          DTS:Description="Create New Visit Data View"
+          DTS:DTSID="{C809DC65-472B-4C1C-B53B-6AEA3E85DFF0}"
+          DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Create New Visit Data View Task"
+          DTS:ThreadHint="0">
+          <DTS:Variables />
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{DAD8B678-B8B4-4619-9ED9-952B9B3B7A1F}"
+              SQLTask:SqlStatementSource="&#xA;If (Select Object_ID('vETLNewVisitData')) is NOT null&#xA;Drop View vETLNewVisitData;&#xA;go&#xA;&#xA;Create View vETLNewVisitData&#xA;/* Author: &lt;FeiyangYu&gt;&#xA;** Desc: Create view for new visits data&#xA;** Change Log: When,Who,What&#xA;** 2019-08-26,&lt;FeiyangYu&gt;,Created Sproc.&#xA;*/&#xA;As&#xA;  Select &#xA;    [Time], [Clinic] = 1, [Patient], [Doctor], &#xA;&#x9;[Procedure], [Charge] &#xA;   from dbo.[BellevueStagingTable]&#xA;  Union All&#xA;  Select &#xA;    [Time], [Patient], [Clinic], [Doctor], &#xA;&#x9;[Procedure], [Charge] &#xA;   from dbo.[KirklandStagingTable]&#xA;  Union All&#xA;  Select &#xA;    [Time], [Clinic], [Patient], [Doctor], &#xA;&#x9;[Procedure], [Charge] &#xA;   from dbo.[RedmondStagingTable]&#xA;go&#xA;" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+          </DTS:ObjectData>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\CSV TO OLTP Sequence Container\Create Or Clear Staging Tables Task"
+          DTS:CreationName="Microsoft.ExecuteSQLTask"
+          DTS:Description="Create Or Clear Staging Tables"
+          DTS:DTSID="{85059FA8-BBC8-4C5A-80BB-8D05E32A531D}"
+          DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Create Or Clear Staging Tables Task"
+          DTS:ThreadHint="0">
+          <DTS:Variables />
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{DAD8B678-B8B4-4619-9ED9-952B9B3B7A1F}"
+              SQLTask:SqlStatementSource="&#xA;If (Select Object_ID('pETLCreateOrClearStagingTables')) is NOT null&#xA;Drop Procedure pETLCreateOrClearStagingTables;&#xA;go&#xA;&#xA;Create Procedure pETLCreateOrClearStagingTables&#xA;/* Author: &lt;FeiyangYu&gt;&#xA;** Desc: Create or clear all the staging tables&#xA;** Change Log: When,Who,What&#xA;** 2019-08-26,&lt;FeiyangYu&gt;,Created Sproc.&#xA;*/&#xA;AS&#xA; Begin&#xA;  Declare @RC int = 0;&#xA;  Begin Try&#xA;    -- ETL Processing Code --&#xA;&#x9;If (Select OBJECT_ID('BellevueStagingTable')) Is NOT null&#xA;&#x9;&#x9;Truncate Table BellevueStagingTable;&#xA;&#x9;Else&#xA;&#x9;&#x9;Create Table [dbo].[BellevueStagingTable](&#xA;&#x9;&#x9;[Time] [varchar](100) NULL,&#xA;&#x9;&#x9;--[Clinic] [varchar](100) NULL,&#xA;&#x9;&#x9;[Patient] [varchar](100) NULL,&#xA;&#x9;&#x9;[Doctor] [varchar](100) NULL,&#xA;&#x9;&#x9;[Procedure] [varchar](100) NULL,&#xA;&#x9;&#x9;[Charge] [varchar](100) NULL&#xA;&#x9;&#x9;);&#xA;&#xA;&#x9;If (Select OBJECT_ID('KirklandStagingTable')) Is NOT null&#xA;&#x9;&#x9;Truncate Table KirklandStagingTable;&#xA;&#x9;Else&#xA;&#x9;&#x9;Create Table [dbo].[KirklandStagingTable](&#xA;&#x9;&#x9;[Time] [varchar](100) NULL,&#xA;&#x9;&#x9;[Clinic] [varchar](100) NULL,&#xA;&#x9;&#x9;[Patient] [varchar](100) NULL,&#xA;&#x9;&#x9;[Doctor] [varchar](100) NULL,&#xA;&#x9;&#x9;[Procedure] [varchar](100) NULL,&#xA;&#x9;&#x9;[Charge] [varchar](100) NULL&#xA;&#x9;&#x9;);&#xA;&#xA;&#x9;If (Select OBJECT_ID('RedmondStagingTable')) Is NOT null&#xA;&#x9;&#x9;Truncate Table RedmondStagingTable;&#xA;&#x9;Else&#xA;&#x9;&#x9;Create Table [dbo].[RedmondStagingTable](&#xA;&#x9;&#x9;[Time] [varchar](100) NULL,&#xA;&#x9;&#x9;[Clinic] [varchar](100) NULL,&#xA;&#x9;&#x9;[Patient] [varchar](100) NULL,&#xA;&#x9;&#x9;[Doctor] [varchar](100) NULL,&#xA;&#x9;&#x9;[Procedure] [varchar](100) NULL,&#xA;&#x9;&#x9;[Charge] [varchar](100) NULL&#xA;&#x9;&#x9;);&#xA;   Set @RC = +1&#xA;  End Try&#xA;  Begin Catch&#xA;   Print Error_Message()&#xA;   Set @RC = -1&#xA;  End Catch&#xA;  Return @RC;&#xA; End&#xA;go&#xA;&#xA;Execute pETLCreateOrClearStagingTables;&#xA;go&#xA;" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+          </DTS:ObjectData>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\CSV TO OLTP Sequence Container\Import CSV Data To Staging Tables Task"
+          DTS:CreationName="Microsoft.ExecuteSQLTask"
+          DTS:Description="Import CSV Data To Staging Tables"
+          DTS:DTSID="{75207C57-2D5D-4A87-A3DB-F57DA00D5824}"
+          DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Import CSV Data To Staging Tables Task"
+          DTS:ThreadHint="0">
+          <DTS:Variables />
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{DAD8B678-B8B4-4619-9ED9-952B9B3B7A1F}"
+              SQLTask:SqlStatementSource="&#xA;If (Select Object_ID('pETLImportStagingTables')) is NOT null&#xA;Drop Procedure pETLImportStagingTables;&#xA;go&#xA;&#xA;Create Procedure pETLImportStagingTables&#xA;/* Author: &lt;FeiyangYu&gt;&#xA;** Desc: import data to the staging tables&#xA;** Change Log: When,Who,What&#xA;** 2019-08-26,&lt;FeiyangYu&gt;,Created Sproc.&#xA;*/&#xA;AS&#xA; Begin&#xA;  Declare @RC int = 0;&#xA;  Begin Try&#xA;    -- ETL Processing Code --&#xA;&#x9;BULK INSERT Patients.dbo.[BellevueStagingTable]&#xA;&#x9; FROM 'C:\DataToProcess\Bellevue\20100102Visits.csv'&#xA;&#x9;  WITH ( FIELDTERMINATOR = ',', ROWTERMINATOR = '\n', FIRSTROW=2);&#xA;&#x9;  &#x9;&#xA;&#x9;BULK INSERT Patients.dbo.[KirklandStagingTable]&#xA;&#x9; FROM 'C:\DataToProcess\Kirkland\20100102Visits.csv'&#xA;&#x9;  WITH ( FIELDTERMINATOR = ',', ROWTERMINATOR = '\n', FIRSTROW=2);&#xA;&#xA;&#x9;BULK INSERT Patients.dbo.[RedmondStagingTable]&#xA;&#x9; FROM 'C:\DataToProcess\Redmond\20100102Visits.csv'&#xA;&#x9;  WITH ( FIELDTERMINATOR = ',', ROWTERMINATOR = '\n', FIRSTROW=2);&#xA;   Set @RC = +1&#xA;  End Try&#xA;  Begin Catch&#xA;   Print Error_Message()&#xA;   Set @RC = -1&#xA;  End Catch&#xA;  Return @RC;&#xA; End&#xA;go&#xA;&#xA;Execute pETLImportStagingTables;&#xA;go" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+          </DTS:ObjectData>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\CSV TO OLTP Sequence Container\Import New Visit Data To Table Task"
+          DTS:CreationName="Microsoft.ExecuteSQLTask"
+          DTS:Description="Import New Visit Data To Table"
+          DTS:DTSID="{B527A73D-A36B-416C-BAE0-5B5440B4FC4E}"
+          DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Import New Visit Data To Table Task"
+          DTS:ThreadHint="0">
+          <DTS:Variables />
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{DAD8B678-B8B4-4619-9ED9-952B9B3B7A1F}"
+              SQLTask:SqlStatementSource="&#xA;If (Select Object_ID('pETLImportNewVisitData')) is NOT null&#xA;Drop procedure pETLImportNewVisitData;&#xA;go&#xA;&#xA;Create Procedure pETLImportNewVisitData(@Date date)&#xA;/* Author: &lt;FeiyangYu&gt;&#xA;** Desc: import data to the patients database&#xA;** Change Log: When,Who,What&#xA;** 2019-08-26,&lt;FeiyangYu&gt;,Created Sproc.&#xA;*/&#xA;AS&#xA; Begin&#xA;  Declare @RC int = 0;&#xA;  Begin Try&#xA;    -- ETL Processing Code --&#xA;&#x9;&#x9;With AddedORChangedVisitData&#xA;&#x9;&#x9;As(&#xA;&#x9;&#x9;&#x9;Select &#xA;&#x9;&#x9;&#x9;[Date] = CAST(@Date as datetime) + CAST([Time] as datetime),&#xA;&#x9;&#x9;&#x9;[Clinic] = CAST([Clinic] as int) * 100,&#xA;&#x9;&#x9;&#x9;[Patient] = CAST([Patient] as int),&#xA;&#x9;&#x9;&#x9;[Doctor] = CAST([Doctor] as int),&#xA;&#x9;&#x9;&#x9;[Procedure] = CAST([Procedure] as int),&#xA;&#x9;&#x9;&#x9;[Charge] = CAST([Charge] as money)&#xA;&#x9;&#x9;&#x9;From vETLNewVisitData&#xA;&#x9;&#x9;&#x9;Except&#xA;&#x9;&#x9;&#x9;Select &#xA;&#x9;&#x9;&#x9;[Date], [Clinic], [Patient], [Doctor], [Procedure], [Charge] &#xA;&#x9;&#x9;&#x9;From Patients.dbo.Visits&#xA;&#xA;&#x9;&#x9;)&#xA;&#x9;  INSERT INTO [Patients].dbo.Visits&#xA;      ([Date],[Clinic],[Patient],[Doctor],[Procedure],[Charge])&#xA;      SELECT&#xA;        [Date]&#xA;       ,[Clinic]&#xA;       ,[Patient]&#xA;       ,[Doctor]&#xA;       ,[Procedure] &#xA;       ,[Charge]&#xA;      FROM AddedORChangedVisitData;&#xA;   Set @RC = +1&#xA;  End Try&#xA;  Begin Catch&#xA;   Print Error_Message()&#xA;   Set @RC = -1&#xA;  End Catch&#xA;  Return @RC;&#xA; End&#xA;go&#xA;&#xA;Declare @Date date = Convert(datetime, convert(char(8), '20100102'))&#xA;EXEC pETLImportNewVisitData @Date = @Date&#xA;go" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+          </DTS:ObjectData>
+        </DTS:Executable>
+      </DTS:Executables>
+      <DTS:PrecedenceConstraints>
+        <DTS:PrecedenceConstraint
+          DTS:refId="Package\CSV TO OLTP Sequence Container.PrecedenceConstraints[Constraint]"
+          DTS:CreationName=""
+          DTS:DTSID="{B6E8502C-B30E-4606-9994-98051020D78B}"
+          DTS:From="Package\CSV TO OLTP Sequence Container\Create Or Clear Staging Tables Task"
+          DTS:LogicalAnd="True"
+          DTS:ObjectName="Constraint"
+          DTS:To="Package\CSV TO OLTP Sequence Container\Import CSV Data To Staging Tables Task" />
+        <DTS:PrecedenceConstraint
+          DTS:refId="Package\CSV TO OLTP Sequence Container.PrecedenceConstraints[Constraint 1]"
+          DTS:CreationName=""
+          DTS:DTSID="{340B2DFB-0F4E-41A3-9C14-4C31709072FD}"
+          DTS:From="Package\CSV TO OLTP Sequence Container\Import CSV Data To Staging Tables Task"
+          DTS:LogicalAnd="True"
+          DTS:ObjectName="Constraint 1"
+          DTS:To="Package\CSV TO OLTP Sequence Container\Create New Visit Data View Task" />
+        <DTS:PrecedenceConstraint
+          DTS:refId="Package\CSV TO OLTP Sequence Container.PrecedenceConstraints[Constraint 2]"
+          DTS:CreationName=""
+          DTS:DTSID="{FF1F8DFA-59A7-47B5-8CAC-586FEEFF8E8F}"
+          DTS:From="Package\CSV TO OLTP Sequence Container\Create New Visit Data View Task"
+          DTS:LogicalAnd="True"
+          DTS:ObjectName="Constraint 2"
+          DTS:To="Package\CSV TO OLTP Sequence Container\Import New Visit Data To Table Task" />
+      </DTS:PrecedenceConstraints>
+    </DTS:Executable>
+    <DTS:Executable
+      DTS:refId="Package\OLTP To Data Warehouse Sequence Container"
+      DTS:CreationName="STOCK:SEQUENCE"
+      DTS:Description="Sequence Container"
+      DTS:DTSID="{E1D9ED64-4A77-47CE-AC0C-6EE77C710661}"
+      DTS:ExecutableType="STOCK:SEQUENCE"
+      DTS:LocaleID="-1"
+      DTS:ObjectName="OLTP To Data Warehouse Sequence Container">
+      <DTS:Variables />
+      <DTS:Executables>
+        <DTS:Executable
+          DTS:refId="Package\OLTP To Data Warehouse Sequence Container\Add Foreign Keys Task"
+          DTS:CreationName="Microsoft.ExecuteSQLTask"
+          DTS:Description="Add foreign keys back"
+          DTS:DTSID="{431AD448-B654-44DC-A513-2D9560958D07}"
+          DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Add Foreign Keys Task"
+          DTS:ThreadHint="0">
+          <DTS:Variables />
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{A4D41E7A-78F4-4962-BF5B-8D4D1D753EEC}"
+              SQLTask:SqlStatementSource="&#xA;Create Procedure pETLAddForeignKeyConstraints&#xA;/* Author: &lt;FeiyangYu&gt;&#xA;** Desc: Removed FKs before truncation of the tables&#xA;** Change Log: When,Who,What&#xA;** 2019-08-26,&lt;FeiyangYu&gt;,Created Sproc.&#xA;*/&#xA;AS&#xA; Begin&#xA;  Declare @RC int = 0;&#xA;  Begin Try&#xA;    -- ETL Processing Code --&#xA;    ALTER TABLE DWClinicReportData.dbo.FactDoctorShifts&#xA;      ADD CONSTRAINT fkFactDoctorShiftsToDimDates&#xA;      FOREIGN KEY (ShiftDateKey) REFERENCES DimDates(DateKey);&#xA;&#x9;ALTER TABLE DWClinicReportData.dbo.FactDoctorShifts&#xA;      ADD CONSTRAINT fkFactDoctorShiftsToDimClinics&#xA;      FOREIGN KEY (ClinicKey) REFERENCES DimClinics(ClinicKey);&#xA;&#x9;ALTER TABLE DWClinicReportData.dbo.FactDoctorShifts&#xA;      ADD CONSTRAINT fkFactDoctorShiftsToDimShifts&#xA;      FOREIGN KEY (ShiftKey) REFERENCES DimShifts(ShiftKey);&#xA;&#x9;ALTER TABLE DWClinicReportData.dbo.FactDoctorShifts&#xA;      ADD CONSTRAINT fkFactDoctorShiftsToDimDoctors&#xA;      FOREIGN KEY (DoctorKey) REFERENCES DimDoctors(DoctorKey);&#xA;&#x9;ALTER TABLE DWClinicReportData.dbo.FactVisits&#xA;      ADD CONSTRAINT fkFactVisitsToDimDates&#xA;      FOREIGN KEY (DateKey) REFERENCES  DimDates(DateKey);&#xA;&#x9;ALTER TABLE DWClinicReportData.dbo.FactVisits&#xA;      ADD CONSTRAINT fkFactVisitsToDimClinics&#xA;      FOREIGN KEY (ClinicKey) REFERENCES DimClinics(ClinicKey);&#xA;&#x9;ALTER TABLE DWClinicReportData.dbo.FactVisits&#xA;      ADD CONSTRAINT fkFactVisitsToDimPatients&#xA;      FOREIGN KEY (PatientKey) REFERENCES DimPatients(PatientKey);&#xA;&#x9;ALTER TABLE DWClinicReportData.dbo.FactVisits WITH NOCHECK&#xA;      ADD CONSTRAINT fkFactVisitsToDimDoctors&#xA;      FOREIGN KEY (DoctorKey) REFERENCES DimDoctors(DoctorKey) ;&#xA;&#x9;ALTER TABLE DWClinicReportData.dbo.FactVisits&#xA;      ADD CONSTRAINT fkFactVisitsToDimProcedures&#xA;      FOREIGN KEY (ProcedureKey) REFERENCES DimProcedures(ProcedureKey);&#xA;   Set @RC = +1&#xA;  End Try&#xA;  Begin Catch&#xA;   Print Error_Message()&#xA;   Set @RC = -1&#xA;  End Catch&#xA;  Return @RC;&#xA; End&#xA;go&#xA;&#xA;&#xA;EXEC pETLAddForeignKeyConstraints&#xA;GO" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+          </DTS:ObjectData>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\OLTP To Data Warehouse Sequence Container\Check Existence Task"
+          DTS:CreationName="Microsoft.ExecuteSQLTask"
+          DTS:Description="Check Existence of views and procedures"
+          DTS:DTSID="{035BC9C2-B59F-4E3B-8D9A-E03B010A2328}"
+          DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Check Existence Task"
+          DTS:ThreadHint="0">
+          <DTS:Variables />
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{A4D41E7A-78F4-4962-BF5B-8D4D1D753EEC}"
+              SQLTask:SqlStatementSource="&#xA;If Exists(Select * from Sys.objects where Name = 'pETLDropForeignKeyConstraints')&#xA;   Drop Procedure pETLDropForeignKeyConstraints;&#xA;go&#xA;&#x9;If Exists(Select * from Sys.objects where Name = 'pETLTruncateTables')&#xA;   Drop Procedure pETLTruncateTables;&#xA;go&#xA;&#x9;If Exists(Select * from Sys.objects where Name = 'pETLFillDimDates')&#xA;   Drop Procedure pETLFillDimDates;&#xA;go&#xA;&#x9;If Exists(Select * from Sys.objects where Name = 'vETLDimDoctors')&#xA;   Drop View vETLDimDoctors;&#xA;go&#xA;&#x9;If Exists(Select * from Sys.objects where Name = 'pETLFillDimDoctors')&#xA;   Drop Procedure pETLFillDimDoctors;&#xA;go&#xA;&#x9;If Exists(Select * from Sys.objects where Name = 'vETLDimClinics')&#xA;   Drop View vETLDimClinics;&#xA;go&#xA;&#x9;If Exists(Select * from Sys.objects where Name = 'pETLFillDimClinics')&#xA;   Drop Procedure pETLFillDimClinics;&#xA;go&#xA;&#x9;If Exists(Select * from Sys.objects where Name = 'vETLDimShifts')&#xA;   Drop View vETLDimShifts;&#xA;go&#xA;&#x9;If Exists(Select * from Sys.objects where Name = 'pETLFillDimShifts')&#xA;   Drop Procedure pETLFillDimShifts;&#xA;go&#xA;&#x9;If Exists(Select * from Sys.objects where Name = 'vETLDimProcedures')&#xA;   Drop View vETLDimProcedures;&#xA;go&#xA;&#x9;If Exists(Select * from Sys.objects where Name = 'pETLFillDimProcedures')&#xA;   Drop Procedure pETLFillDimProcedures;&#xA;go&#xA;&#x9;If Exists(Select * from Sys.objects where Name = 'vETLFactDoctorShifts')&#xA;   Drop View vETLFactDoctorShifts;&#xA;go&#xA;&#x9;If Exists(Select * from Sys.objects where Name = 'pETLFillFactDoctorShifts')&#xA;   Drop Procedure pETLFillFactDoctorShifts;&#xA;go&#xA;&#x9;If Exists(Select * from Sys.objects where Name = 'vETLFactVisits')&#xA;   Drop View vETLFactVisits;&#xA;go&#xA;&#x9;If Exists(Select * from Sys.objects where Name = 'pETLFillFactVisits')&#xA;   Drop Procedure pETLFillFactVisits;&#xA;go&#xA;&#x9;If Exists(Select * from Sys.objects where Name = 'pETLAddForeignKeyConstraints')&#xA;   Drop Procedure pETLAddForeignKeyConstraints;&#xA;go&#xA;&#x9;If Exists(Select * from Sys.objects where Name = 'vETLDimPatients')&#xA;   Drop View vETLDimPatients;&#xA;go&#xA;&#x9;If Exists(Select * from Sys.objects where Name = 'pETLSyncDimPatients')&#xA;   Drop Procedure pETLSyncDimPatients;&#xA;go&#xA;" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+          </DTS:ObjectData>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\OLTP To Data Warehouse Sequence Container\Drop Foreign Keys Task"
+          DTS:CreationName="Microsoft.ExecuteSQLTask"
+          DTS:Description="Drop All Foreign Keys"
+          DTS:DTSID="{8BAE5228-70B0-45D7-B420-346D457DF9E6}"
+          DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Drop Foreign Keys Task"
+          DTS:ThreadHint="0">
+          <DTS:Variables />
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{A4D41E7A-78F4-4962-BF5B-8D4D1D753EEC}"
+              SQLTask:SqlStatementSource="&#xA;Create Procedure pETLDropForeignKeyConstraints&#xA;/* Author: &lt;FeiyangYu&gt;&#xA;** Desc: Removed FKs before truncation of the tables&#xA;** Change Log: When,Who,What&#xA;** 2019-08-26,&lt;FeiyangYu&gt;,Created Sproc.&#xA;*/&#xA;AS&#xA; Begin&#xA;  Declare @RC int = 0;&#xA;  Begin Try&#xA;    -- ETL Processing Code --&#xA;&#x9;Alter Table DWClinicReportData.dbo.FactDoctorShifts&#xA;&#x9;  Drop Constraint fkFactDoctorShiftsToDimDates; &#xA;&#x9;Alter Table DWClinicReportData.dbo.FactDoctorShifts&#xA;&#x9;  Drop Constraint fkFactDoctorShiftsToDimClinics; &#xA;&#x9;Alter Table DWClinicReportData.dbo.FactDoctorShifts&#xA;&#x9;  Drop Constraint fkFactDoctorShiftsToDimShifts; &#xA;&#x9;Alter Table DWClinicReportData.dbo.FactDoctorShifts&#xA;&#x9;  Drop Constraint fkFactDoctorShiftsToDimDoctors; &#xA;&#xA;&#xA;&#x9;Alter Table DWClinicReportData.dbo.FactVisits&#xA;&#x9;  Drop Constraint fkFactVisitsToDimDates; &#xA;&#x9;Alter Table DWClinicReportData.dbo.FactVisits&#xA;&#x9;  Drop Constraint fkFactVisitsToDimClinics; &#xA;&#x9;Alter Table DWClinicReportData.dbo.FactVisits&#xA;&#x9;  Drop Constraint fkFactVisitsToDimPatients; &#xA;&#x9;Alter Table DWClinicReportData.dbo.FactVisits&#xA;&#x9;  Drop Constraint fkFactVisitsToDimDoctors; &#xA;&#x9;Alter Table DWClinicReportData.dbo.FactVisits&#xA;&#x9;  Drop Constraint fkFactVisitsToDimProcedures; &#xA;   Set @RC = +1&#xA;  End Try&#xA;  Begin Catch&#xA;   Print Error_Message()&#xA;   Set @RC = -1&#xA;  End Catch&#xA;  Return @RC;&#xA; End&#xA;go&#xA;&#xA;EXEC pETLDropForeignKeyConstraints&#xA;go" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+          </DTS:ObjectData>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\OLTP To Data Warehouse Sequence Container\Fill DimClinics Task"
+          DTS:CreationName="Microsoft.ExecuteSQLTask"
+          DTS:Description="Insert data to DimClinics table"
+          DTS:DTSID="{D6BD6D7F-CE0B-4241-A878-5FA43D07B848}"
+          DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Fill DimClinics Task"
+          DTS:ThreadHint="0">
+          <DTS:Variables />
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{A4D41E7A-78F4-4962-BF5B-8D4D1D753EEC}"
+              SQLTask:SqlStatementSource="&#xA;Create View vETLDimClinics&#xA;/* Author: &lt;FeiyangYu&gt;&#xA;** Desc: Extracts and transforms data for DimClinics&#xA;** Change Log: When,Who,What&#xA;** 2019-08-26,&lt;FeiyangYu&gt;,Created Sproc.&#xA;*/&#xA;As&#xA;  SELECT&#xA;    [ClinicID] = c.ClinicID,&#xA;&#x9;[ClinicName] = c.ClinicName,&#xA;&#x9;[ClinicCity] = c.City,&#xA;&#x9;[ClinicState] = c.[State],&#xA;&#x9;[ClinicZip] = c.Zip&#xA;  FROM [DoctorsSchedules].dbo.Clinics as c&#xA;go&#xA;&#xA;&#xA;Create Procedure pETLFillDimClinics&#xA;/* Author: &lt;FeiyangYu&gt;&#xA;** Desc: Inserts data into DimClinics&#xA;** Change Log: When,Who,What&#xA;** 2019-08-26,&lt;FeiyangYu&gt;,Created Sproc.&#xA;*/&#xA;AS&#xA; Begin&#xA;  Declare @RC int = 0;&#xA;  Begin Try&#xA;    -- ETL Processing Code --&#xA;&#x9;IF ((Select Count(*) From DimClinics) = 0)&#xA;     Begin&#xA;      INSERT INTO [DWClinicReportData].dbo.DimClinics&#xA;      ([ClinicID],[ClinicName],[ClinicCity],[ClinicState],[ClinicZip])&#xA;      SELECT&#xA;        [ClinicID]&#xA;       ,[ClinicName]&#xA;       ,[ClinicCity]&#xA;       ,[ClinicState]&#xA;       ,[ClinicZip] &#xA;      FROM vETLDimClinics&#xA;&#x9;End&#xA;   Set @RC = +1&#xA;  End Try&#xA;  Begin Catch&#xA;   Print Error_Message()&#xA;   Set @RC = -1&#xA;  End Catch&#xA;  Return @RC;&#xA; End&#xA;go&#xA;&#xA;EXEC pETLFillDimClinics&#xA;go" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+          </DTS:ObjectData>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\OLTP To Data Warehouse Sequence Container\Fill DimDates Task"
+          DTS:CreationName="Microsoft.ExecuteSQLTask"
+          DTS:Description="Insert data to DimDates table"
+          DTS:DTSID="{3A19091F-C629-4744-8CE6-4CD32A641478}"
+          DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Fill DimDates Task"
+          DTS:ThreadHint="0">
+          <DTS:Variables />
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{A4D41E7A-78F4-4962-BF5B-8D4D1D753EEC}"
+              SQLTask:SqlStatementSource="&#xA;Create Procedure pETLFillDimDates&#xA;/* Author: &lt;FeiyangYu&gt;&#xA;** Desc: Inserts data into DimDates&#xA;** Change Log: When,Who,What&#xA;** 2019-08-26,&lt;FeiyangYu&gt;,Created Sproc.&#xA;*/&#xA;AS&#xA; Begin&#xA;  Declare @RC int = 0;&#xA;  Begin Try&#xA;    -- ETL Processing Code --&#xA;      Declare @StartDate datetime = '01/01/2005'&#xA;      Declare @EndDate datetime = '01/02/2010' &#xA;      Declare @DateInProcess datetime  = @StartDate&#xA;      -- Loop through the dates until you reach the end date&#xA;      While @DateInProcess &lt;= @EndDate&#xA;       Begin&#xA;       -- Add a row into the date dimension table for this date&#xA;&#x9;   SET IDENTITY_INSERT [DWClinicReportData].dbo.DimDates ON&#xA;       Insert Into DimDates &#xA;       ( [DateKey], [FullDate], [FullDateName], [MonthID], [MonthName], [YearID], [YearName] )&#xA;       Values ( &#xA;         Cast(Convert(nVarchar(50), @DateInProcess, 112) as int) -- [DateKey]&#xA;&#x9;&#x9;,@DateInProcess -- [FullDate]&#xA;        ,DateName(weekday, @DateInProcess) + ', ' + Convert(nVarchar(50), @DateInProcess, 110) -- [FullDateName]  &#xA;        ,Cast(Left(Convert(nVarchar(50), @DateInProcess, 112), 6) as int)  -- [MonthID]&#xA;        ,DateName(month, @DateInProcess) + ' - ' + DateName(YYYY,@DateInProcess) -- [MonthName]&#xA;        ,Year(@DateInProcess) -- [YearID] &#xA;        ,Cast(Year(@DateInProcess) as nVarchar(50)) -- [YearName] &#xA;        )  &#xA;       -- Add a day and loop again&#xA;       Set @DateInProcess = DateAdd(d, 1, @DateInProcess)&#xA;       End&#xA;&#x9;  SET IDENTITY_INSERT [DWClinicReportData].dbo.DimDates OFF&#xA;   Set @RC = +1&#xA;  End Try&#xA;  Begin Catch&#xA;   Print Error_Message()&#xA;   Set @RC = -1&#xA;  End Catch&#xA;  Return @RC;&#xA; End&#xA;go&#xA;&#xA;EXEC pETLFillDimDates&#xA;go" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+          </DTS:ObjectData>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\OLTP To Data Warehouse Sequence Container\Fill DimDoctors Task"
+          DTS:CreationName="Microsoft.ExecuteSQLTask"
+          DTS:Description="Insert data to DimDoctors Table"
+          DTS:DTSID="{97D77589-5A03-4ADE-9AB2-2B9434C63EF5}"
+          DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Fill DimDoctors Task"
+          DTS:ThreadHint="0">
+          <DTS:Variables />
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{A4D41E7A-78F4-4962-BF5B-8D4D1D753EEC}"
+              SQLTask:SqlStatementSource="&#xA;Create View vETLDimDoctors&#xA;/* Author: &lt;FeiyangYu&gt;&#xA;** Desc: Extracts and transforms data for DimDoctors&#xA;** Change Log: When,Who,What&#xA;** 2019-08-26,&lt;FeiyangYu&gt;,Created Sproc.&#xA;*/&#xA;As&#xA;  SELECT&#xA;    [DoctorID] = d.DoctorID,&#xA;&#x9;[DoctorFullName] = CAST(d.FirstName + ' ' + d.LastName as nvarchar(200)),&#xA;&#x9;[DoctorEmailAddress] = d.EmailAddress,&#xA;&#x9;[DoctorCity] = d.City,&#xA;&#x9;[DoctorState] = d.State,&#xA;&#x9;[DoctorZip] = d.Zip&#xA;  FROM [DoctorsSchedules].dbo.Doctors as d&#xA;go&#xA;&#xA;&#xA;Create Procedure pETLFillDimDoctors&#xA;/* Author: &lt;FeiyangYu&gt;&#xA;** Desc: Inserts data into DimDoctors&#xA;** Change Log: When,Who,What&#xA;** 2019-08-26,&lt;FeiyangYu&gt;,Created Sproc.&#xA;*/&#xA;AS&#xA; Begin&#xA;  Declare @RC int = 0;&#xA;  Begin Try&#xA;    -- ETL Processing Code --&#xA;&#x9;IF ((Select Count(*) From DimDoctors) = 0)&#xA;     Begin&#xA;      INSERT INTO [DWClinicReportData].dbo.DimDoctors&#xA;      ([DoctorID],[DoctorFullName],[DoctorEmailAddress],[DoctorCity],[DoctorState],[DoctorZip])&#xA;      SELECT&#xA;        [DoctorID]&#xA;       ,[DoctorFullName]&#xA;       ,[DoctorEmailAddress]&#xA;       ,[DoctorCity]&#xA;       ,[DoctorState] &#xA;       ,[DoctorZip] &#xA;      FROM vETLDimDoctors&#xA;&#x9;End&#xA;   Set @RC = +1&#xA;  End Try&#xA;  Begin Catch&#xA;   Print Error_Message()&#xA;   Set @RC = -1&#xA;  End Catch&#xA;  Return @RC;&#xA; End&#xA;go&#xA;&#xA;EXEC pETLFillDimDoctors&#xA;go" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+          </DTS:ObjectData>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\OLTP To Data Warehouse Sequence Container\Fill DimPatients Task"
+          DTS:CreationName="Microsoft.ExecuteSQLTask"
+          DTS:Description="Insert data to DimPatients table"
+          DTS:DTSID="{0339882C-3D43-4AD3-918E-4A7058FB3582}"
+          DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Fill DimPatients Task"
+          DTS:ThreadHint="0">
+          <DTS:Variables />
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{A4D41E7A-78F4-4962-BF5B-8D4D1D753EEC}"
+              SQLTask:SqlStatementSource="&#xA;Create View vETLDimPatients&#xA;/* Author: &lt;FeiyangYu&gt;&#xA;** Desc: Extracts and transforms data for DimPatients&#xA;** Change Log: When,Who,What&#xA;** 2019-08-26,&lt;FeiyangYu&gt;,Created Sproc.&#xA;*/&#xA;As&#xA;  SELECT&#xA;    [PatientID] = p.ID,&#xA;&#x9;[PatientFullName] = CAST(p.FName + ' ' + p.LName as varchar(100)),&#xA;&#x9;[PatientCity] = CAST(p.City as varchar(100)),&#xA;&#x9;[PatientState] = CAST(p.[State] as varchar(100)),&#xA;&#x9;[PatientZipCode] = p.ZipCode&#xA;  FROM [Patients].dbo.Patients as p&#xA;go&#xA;&#xA;Create Procedure pETLSyncDimPatients&#xA;/* Author: &lt;FeiyangYu&gt;&#xA;** Desc: Inserts data into DimPatients&#xA;** Change Log: When,Who,What&#xA;** 2019-08-26,&lt;FeiyangYu&gt;,Created Sproc.&#xA;*/&#xA;AS&#xA; Begin&#xA;  Declare @RC int = 0;&#xA;  Begin Try&#xA;    -- ETL Processing Code --&#xA;&#xA;    -- 1) For UPDATE: Change the EndDate and IsCurrent on any added rows &#xA;&#x9;With ChangedPatients&#xA;&#x9;&#x9;As(&#xA;&#x9;&#x9;&#x9;Select [PatientID], [PatientFullName], [PatientCity], [PatientState], [PatientZipCode]  From vETLDimPatients&#xA;&#x9;&#x9;&#x9;Except&#xA;&#x9;&#x9;&#x9;Select [PatientID], [PatientFullName], [PatientCity], [PatientState], [PatientZipCode] From DimPatients&#xA;    )UPDATE [DWClinicReportData].dbo.DimPatients&#xA;      SET EndDate = Cast(GetDate() as date)&#xA;         ,IsCurrent = 0&#xA;       WHERE PatientID IN (Select PatientID From ChangedPatients)&#xA;    ;&#xA;&#xA;    -- 2) For INSERT or UPDATES: Add new rows to the table&#xA;&#x9;With AddedORChangedPatients&#xA;&#x9;&#x9;As(&#xA;            Select [PatientID], [PatientFullName], [PatientCity], [PatientState], [PatientZipCode] From vETLDimPatients&#xA;&#x9;&#x9;&#x9;Except&#xA;&#x9;&#x9;&#x9;Select PatientID, [PatientFullName], [PatientCity], [PatientState], [PatientZipCode] From DimPatients&#xA;&#x9;&#x9;)INSERT INTO [DWClinicReportData].dbo.DimPatients&#xA;      ([PatientID], [PatientFullName], [PatientCity], [PatientState], [PatientZipCode],[StartDate],[EndDate],[IsCurrent])&#xA;      SELECT&#xA;        [PatientID]&#xA;       ,[PatientFullName]&#xA;       ,[PatientCity]&#xA;       ,[PatientState]&#xA;&#x9;   ,[PatientZipCode]&#xA;       ,[StartDate] = Cast(GetDate() as date)&#xA;       ,[EndDate] = Null &#xA;       ,[IsCurrent] = 1&#xA;      FROM vETLDimPatients&#xA;      WHERE PatientID IN (Select PatientID From AddedORChangedPatients)&#xA;    ;&#xA;&#xA;    -- 3) For Delete: Change the IsCurrent status to zero&#xA; With DeletedPatients&#xA;&#x9;&#x9;As(&#xA;&#x9;&#x9;&#x9;Select [PatientID], [PatientFullName], [PatientCity], [PatientState], [PatientZipCode] From DimPatients&#xA; &#x9;&#x9;&#x9;Except            &#x9;&#x9;&#x9;&#xA;            Select [PatientID], [PatientFullName], [PatientCity], [PatientState], [PatientZipCode] From vETLDimPatients&#xA;   &#x9;)UPDATE [DWClinicReportData].dbo.DimPatients&#xA;      SET EndDate = Cast(GetDate() as date)&#xA;         ,IsCurrent = 0&#xA;       WHERE PatientID IN (Select PatientID From DeletedPatients)&#xA;   ;&#xA;&#xA;   Set @RC = +1&#xA;  End Try&#xA;  Begin Catch&#xA;   Print Error_Message()&#xA;   Set @RC = -1&#xA;  End Catch&#xA;  Return @RC;&#xA; End&#xA;go&#xA;&#xA;EXEC pETLSyncDimPatients&#xA;go" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+          </DTS:ObjectData>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\OLTP To Data Warehouse Sequence Container\Fill DimProcedures Task"
+          DTS:CreationName="Microsoft.ExecuteSQLTask"
+          DTS:Description="Insert data to DimProcedures table"
+          DTS:DTSID="{B72BC0A4-F419-4027-A195-95B76A3D4B4C}"
+          DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Fill DimProcedures Task"
+          DTS:ThreadHint="0">
+          <DTS:Variables />
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{A4D41E7A-78F4-4962-BF5B-8D4D1D753EEC}"
+              SQLTask:SqlStatementSource="&#xA;Create View vETLDimProcedures&#xA;/* Author: &lt;FeiyangYu&gt;&#xA;** Desc: Extracts and transforms data for DimProcedures&#xA;** Change Log: When,Who,What&#xA;** 2019-08-26,&lt;FeiyangYu&gt;,Created Sproc.&#xA;*/&#xA;As&#xA;  SELECT&#xA;    [ProcedureID] = p.ID,&#xA;&#x9;[ProcedureName] = p.[Name],&#xA;&#x9;[ProcedureDesc] = p.[Desc],&#xA;&#x9;[ProcedureCharge] = p.Charge&#xA;  FROM [Patients].dbo.Procedures as p&#xA;go&#xA;&#xA;Create Procedure pETLFillDimProcedures&#xA;/* Author: &lt;FeiyangYu&gt;&#xA;** Desc: Inserts data into DimProcedures&#xA;** Change Log: When,Who,What&#xA;** 2019-08-26,&lt;FeiyangYu&gt;,Created Sproc.&#xA;*/&#xA;AS&#xA; Begin&#xA;  Declare @RC int = 0;&#xA;  Begin Try&#xA;    -- ETL Processing Code --&#xA;&#x9;IF ((Select Count(*) From DimProcedures) = 0)&#xA;     Begin&#xA;      INSERT INTO [DWClinicReportData].dbo.DimProcedures&#xA;      ([ProcedureID],[ProcedureName],[ProcedureDesc],[ProcedureCharge])&#xA;      SELECT&#xA;        [ProcedureID]&#xA;       ,[ProcedureName]&#xA;       ,[ProcedureDesc]&#xA;       ,[ProcedureCharge]&#xA;      FROM vETLDimProcedures&#xA;&#x9;End&#xA;   Set @RC = +1&#xA;  End Try&#xA;  Begin Catch&#xA;   Print Error_Message()&#xA;   Set @RC = -1&#xA;  End Catch&#xA;  Return @RC;&#xA; End&#xA;go&#xA;&#xA;EXEC pETLFillDimProcedures&#xA;go" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+          </DTS:ObjectData>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\OLTP To Data Warehouse Sequence Container\Fill DimShifts Task"
+          DTS:CreationName="Microsoft.ExecuteSQLTask"
+          DTS:Description="Insert data to DimShifts table"
+          DTS:DTSID="{AAD15F25-9B9E-4EB1-96E3-75A65018D380}"
+          DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Fill DimShifts Task"
+          DTS:ThreadHint="0">
+          <DTS:Variables />
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{A4D41E7A-78F4-4962-BF5B-8D4D1D753EEC}"
+              SQLTask:SqlStatementSource="&#xA;Create View vETLDimShifts&#xA;/* Author: &lt;FeiyangYu&gt;&#xA;** Desc: Extracts and transforms data for DimShifts&#xA;** Change Log: When,Who,What&#xA;** 2019-08-26,&lt;FeiyangYu&gt;,Created Sproc.&#xA;*/&#xA;As&#xA;  SELECT&#xA;    [ShiftID] = s.ShiftID,&#xA;&#x9;[ShiftStart] = Case s.ShiftStart &#xA;&#x9;When '01:00:00' then '13:00:00' &#xA;&#x9;When '09:00:00' then '09:00:00' &#xA;&#x9;When '21:00:00' then '21:00:00' End,&#xA;&#x9;[ShiftEnd] = Case s.ShiftEnd &#xA;&#x9;When '05:00:00' then '17:00:00' &#xA;&#x9;When '21:00:00' then '21:00:00'&#xA;&#x9;When '09:00:00' then '09:00:00' End&#xA;  FROM [DoctorsSchedules].dbo.Shifts as s&#xA;go&#xA;&#xA;Create Procedure pETLFillDimShifts&#xA;/* Author: &lt;FeiyangYu&gt;&#xA;** Desc: Inserts data into DimShifts&#xA;** Change Log: When,Who,What&#xA;** 2019-08-26,&lt;FeiyangYu&gt;,Created Sproc.&#xA;*/&#xA;AS&#xA; Begin&#xA;  Declare @RC int = 0;&#xA;  Begin Try&#xA;    -- ETL Processing Code --&#xA;&#x9;IF ((Select Count(*) From DimShifts) = 0)&#xA;     Begin&#xA;      INSERT INTO [DWClinicReportData].dbo.DimShifts&#xA;      ([ShiftID],[ShiftStart],[ShiftEnd])&#xA;      SELECT&#xA;        [ShiftID]&#xA;       ,[ShiftStart]&#xA;       ,[ShiftEnd]&#xA;      FROM vETLDimShifts&#xA;&#x9;End&#xA;   Set @RC = +1&#xA;  End Try&#xA;  Begin Catch&#xA;   Print Error_Message()&#xA;   Set @RC = -1&#xA;  End Catch&#xA;  Return @RC;&#xA; End&#xA;go&#xA;&#xA;EXEC pETLFillDimShifts&#xA;go" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+          </DTS:ObjectData>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\OLTP To Data Warehouse Sequence Container\Fill FactDoctorShifts Task"
+          DTS:CreationName="Microsoft.ExecuteSQLTask"
+          DTS:Description="Insert data to FactDoctorShifts table"
+          DTS:DTSID="{DF0F92DE-3EB8-434B-B24B-A5ECB8B90910}"
+          DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Fill FactDoctorShifts Task"
+          DTS:ThreadHint="0">
+          <DTS:Variables />
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{A4D41E7A-78F4-4962-BF5B-8D4D1D753EEC}"
+              SQLTask:SqlStatementSource="&#xA;Create View vETLFactDoctorShifts&#xA;/* Author: &lt;FeiyangYu&gt;&#xA;** Desc: Extracts and transforms data for vETLFactDoctorShifts&#xA;** Change Log: When,Who,What&#xA;** 2019-08-26,&lt;FeiyangYu&gt;,Created Sproc.&#xA;*/&#xA;As&#xA;  SELECT&#xA;    [DoctorShiftID] = ds.DoctorsShiftID&#xA;   ,[ShiftDateKey] = d.DateKey&#xA;   ,[ClinicKey] = c.ClinicKey&#xA;   ,[ShiftKey] = s.ShiftKey&#xA;   ,[DoctorKey] = doc.DoctorKey&#xA;   ,[HoursWorked] = DATEDIFF(hh, s.ShiftStart, s.ShiftEnd)&#xA;  FROM [DoctorsSchedules].dbo.DoctorShifts as ds&#xA;  JOIN [DWClinicReportData].dbo.DimDates as d&#xA;   ON Cast(Convert(nVarchar(50), ds.ShiftDate, 112) as int) = d.DateKey&#xA;  JOIN [DWClinicReportData].dbo.DimClinics as c&#xA;   ON c.ClinicID = ds.ClinicID&#xA;  JOIN [DWClinicReportData].dbo.DimDoctors as doc&#xA;   ON doc.DoctorID = ds.DoctorID&#xA;  JOIN [DWClinicReportData].dbo.DimShifts as s&#xA;   ON s.ShiftID = ds.ShiftID&#xA;go&#xA;&#xA;&#xA;Create Procedure pETLFillFactDoctorShifts&#xA;/* Author: &lt;FeiyangYu&gt;&#xA;** Desc: Inserts data into FactDoctorShifts&#xA;** Change Log: When,Who,What&#xA;** 2019-08-26,&lt;FeiyangYu&gt;,Created Sproc.&#xA;*/&#xA;AS&#xA; Begin&#xA;  Declare @RC int = 0;&#xA;  Begin Try&#xA;    -- ETL Processing Code --&#xA;   IF ((Select Count(*) From FactDoctorShifts) = 0)&#xA;     Begin&#xA;      INSERT INTO [DWClinicReportData].dbo.FactDoctorShifts&#xA;      ([DoctorsShiftID], [ShiftDateKey], [ClinicKey], &#xA;&#x9;   [ShiftKey], [DoctorKey], [HoursWorked])&#xA;      SELECT&#xA;        [DoctorShiftID]&#xA;&#x9;   ,[ShiftDateKey]&#xA;&#x9;   ,[ClinicKey]&#xA;&#x9;   ,[ShiftKey]&#xA;       ,[DoctorKey]&#xA;       ,[HoursWorked]&#xA;      FROM vETLFactDoctorShifts&#xA;&#x9;End&#xA;   Set @RC = +1&#xA;  End Try&#xA;  Begin Catch&#xA;   Print Error_Message()&#xA;   Set @RC = -1&#xA;  End Catch&#xA;  Return @RC;&#xA; End&#xA;go&#xA;&#xA;EXEC pETLFillFactDoctorShifts&#xA;go" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+          </DTS:ObjectData>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\OLTP To Data Warehouse Sequence Container\Fill FactVisits Task"
+          DTS:CreationName="Microsoft.ExecuteSQLTask"
+          DTS:Description="Insert data to FactVisits table"
+          DTS:DTSID="{4D1B7F76-BECC-440B-A3E8-F6D1EEB5B710}"
+          DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Fill FactVisits Task"
+          DTS:ThreadHint="0">
+          <DTS:Variables />
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{A4D41E7A-78F4-4962-BF5B-8D4D1D753EEC}"
+              SQLTask:SqlStatementSource="&#xA;Create View vETLFactVisits&#xA;/* Author: &lt;FeiyangYu&gt;&#xA;** Desc: Extracts and transforms data for vETLFactVisits&#xA;** Change Log: When,Who,What&#xA;** 2019-08-26,&lt;FeiyangYu&gt;,Created Sproc.&#xA;*/&#xA;As&#xA;  SELECT&#xA;&#x9;[VisitKey] = v.ID&#xA;   ,[DateKey] = d.DateKey&#xA;   ,[ClinicKey] = c.ClinicKey&#xA;   ,[PatientKey] = p.PatientKey&#xA;   ,[DoctorKey] =  ISNULL(doc.DoctorKey, 0)&#xA;   ,[ProcedureKey] = pro.ProcedureKey&#xA;   ,[ProcedureVistCharge] = pro.ProcedureCharge&#xA;   FROM [Patients].dbo.Visits as v&#xA;   JOIN [DWClinicReportData].dbo.DimDates as d&#xA;   ON cast(format(v.[Date],'yyyyMMdd') as int) = d.DateKey&#xA;  JOIN [DWClinicReportData].dbo.DimClinics as c&#xA;   ON c.ClinicID * 100 = v.Clinic&#xA;   FULL OUTER JOIN [DWClinicReportData].dbo.DimDoctors as doc&#xA;   ON doc.DoctorID = v.Doctor&#xA;  JOIN [DWClinicReportData].dbo.DimPatients as p&#xA;   ON v.Patient = p.PatientID&#xA;  JOIN [DWClinicReportData].DBO.DimProcedures  as pro&#xA;   ON v.[Procedure] = pro.ProcedureID&#xA;go&#xA;&#xA;&#xA;Create Procedure pETLFillFactVisits&#xA;/* Author: &lt;FeiyangYu&gt;&#xA;** Desc: Inserts data into FactVisits&#xA;** Change Log: When,Who,What&#xA;** 2019-08-26,&lt;FeiyangYu&gt;,Created Sproc.&#xA;*/&#xA;AS&#xA; Begin&#xA;  Declare @RC int = 0;&#xA;  Begin Try&#xA;    -- ETL Processing Code --&#xA;     Begin&#xA;      INSERT INTO [DWClinicReportData].dbo.FactVisits&#xA;      ([VisitKey], [DateKey], [ClinicKey], [PatientKey], &#xA;&#x9;   [DoctorKey], [ProcedureKey], [ProcedureVistCharge])&#xA;      SELECT&#xA;&#x9;    [VisitKey]&#xA;       ,[DateKey]&#xA;&#x9;   ,[ClinicKey]&#xA;&#x9;   ,[PatientKey]&#xA;&#x9;   ,[DoctorKey]&#xA;       ,[ProcedureKey]&#xA;       ,[ProcedureVistCharge]&#xA;      FROM vETLFactVisits&#xA;&#x9;End&#xA;   Set @RC = +1&#xA;  End Try&#xA;  Begin Catch&#xA;   Print Error_Message()&#xA;   Set @RC = -1&#xA;  End Catch&#xA;  Return @RC;&#xA; End&#xA;go&#xA;&#xA;EXEC pETLFillFactVisits&#xA;go" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+          </DTS:ObjectData>
+        </DTS:Executable>
+        <DTS:Executable
+          DTS:refId="Package\OLTP To Data Warehouse Sequence Container\Truncate Tables Task"
+          DTS:CreationName="Microsoft.ExecuteSQLTask"
+          DTS:Description="Truncate all the tables"
+          DTS:DTSID="{2B39A806-97C7-423E-A753-E82D7DCFE040}"
+          DTS:ExecutableType="Microsoft.ExecuteSQLTask"
+          DTS:LocaleID="-1"
+          DTS:ObjectName="Truncate Tables Task"
+          DTS:ThreadHint="0">
+          <DTS:Variables />
+          <DTS:ObjectData>
+            <SQLTask:SqlTaskData
+              SQLTask:Connection="{A4D41E7A-78F4-4962-BF5B-8D4D1D753EEC}"
+              SQLTask:SqlStatementSource="&#xA;Create Procedure pETLTruncateTables&#xA;/* Author: &lt;FeiyangYu&gt;&#xA;** Desc: Flushes all date from the tables&#xA;** Change Log: When,Who,What&#xA;** 2019-08-26,&lt;FeiyangYu&gt;,Created Sproc.&#xA;*/&#xA;AS&#xA; Begin&#xA;  Declare @RC int = 0;&#xA;  Begin Try&#xA;    -- ETL Processing Code --&#xA;&#x9;Truncate Table [DWClinicReportData].dbo.FactVisits;&#xA;&#x9;Truncate Table [DWClinicReportData].dbo.FactDoctorShifts;&#xA;    Truncate Table [DWClinicReportData].dbo.DimDates;&#xA;&#x9;Truncate Table [DWClinicReportData].dbo.DimClinics;&#xA;&#x9;Truncate Table [DWClinicReportData].dbo.DimDoctors;&#xA;&#x9;Truncate Table [DWClinicReportData].dbo.DimShifts;&#xA;&#x9;Truncate Table [DWClinicReportData].dbo.DimProcedures;&#xA;   Set @RC = +1&#xA;  End Try&#xA;  Begin Catch&#xA;   Print Error_Message()&#xA;   Set @RC = -1&#xA;  End Catch&#xA;  Return @RC;&#xA; End&#xA;go&#xA;&#xA;EXEC pETLTruncateTables&#xA;go" xmlns:SQLTask="www.microsoft.com/sqlserver/dts/tasks/sqltask" />
+          </DTS:ObjectData>
+        </DTS:Executable>
+      </DTS:Executables>
+      <DTS:PrecedenceConstraints>
+        <DTS:PrecedenceConstraint
+          DTS:refId="Package\OLTP To Data Warehouse Sequence Container.PrecedenceConstraints[Constraint]"
+          DTS:CreationName=""
+          DTS:DTSID="{862C3273-69C1-43F8-B67E-E8FFBF498466}"
+          DTS:From="Package\OLTP To Data Warehouse Sequence Container\Check Existence Task"
+          DTS:LogicalAnd="True"
+          DTS:ObjectName="Constraint"
+          DTS:To="Package\OLTP To Data Warehouse Sequence Container\Drop Foreign Keys Task" />
+        <DTS:PrecedenceConstraint
+          DTS:refId="Package\OLTP To Data Warehouse Sequence Container.PrecedenceConstraints[Constraint 1]"
+          DTS:CreationName=""
+          DTS:DTSID="{2A8964C4-3A74-4C79-BA07-FF725BAC61BB}"
+          DTS:From="Package\OLTP To Data Warehouse Sequence Container\Drop Foreign Keys Task"
+          DTS:LogicalAnd="True"
+          DTS:ObjectName="Constraint 1"
+          DTS:To="Package\OLTP To Data Warehouse Sequence Container\Truncate Tables Task" />
+        <DTS:PrecedenceConstraint
+          DTS:refId="Package\OLTP To Data Warehouse Sequence Container.PrecedenceConstraints[Constraint 10]"
+          DTS:CreationName=""
+          DTS:DTSID="{E7CE37EC-3987-415F-B387-D52AB60205EB}"
+          DTS:From="Package\OLTP To Data Warehouse Sequence Container\Fill FactVisits Task"
+          DTS:LogicalAnd="True"
+          DTS:ObjectName="Constraint 10"
+          DTS:To="Package\OLTP To Data Warehouse Sequence Container\Add Foreign Keys Task" />
+        <DTS:PrecedenceConstraint
+          DTS:refId="Package\OLTP To Data Warehouse Sequence Container.PrecedenceConstraints[Constraint 2]"
+          DTS:CreationName=""
+          DTS:DTSID="{DC2B11E8-1DA5-4EBF-933A-14FE44A74617}"
+          DTS:From="Package\OLTP To Data Warehouse Sequence Container\Truncate Tables Task"
+          DTS:LogicalAnd="True"
+          DTS:ObjectName="Constraint 2"
+          DTS:To="Package\OLTP To Data Warehouse Sequence Container\Fill DimDoctors Task" />
+        <DTS:PrecedenceConstraint
+          DTS:refId="Package\OLTP To Data Warehouse Sequence Container.PrecedenceConstraints[Constraint 3]"
+          DTS:CreationName=""
+          DTS:DTSID="{C785471E-FBFD-46E2-A79E-4C5C310D6D16}"
+          DTS:From="Package\OLTP To Data Warehouse Sequence Container\Fill DimDoctors Task"
+          DTS:LogicalAnd="True"
+          DTS:ObjectName="Constraint 3"
+          DTS:To="Package\OLTP To Data Warehouse Sequence Container\Fill DimClinics Task" />
+        <DTS:PrecedenceConstraint
+          DTS:refId="Package\OLTP To Data Warehouse Sequence Container.PrecedenceConstraints[Constraint 4]"
+          DTS:CreationName=""
+          DTS:DTSID="{872AE555-AD30-4BA4-92C8-51B5BE7F6DE8}"
+          DTS:From="Package\OLTP To Data Warehouse Sequence Container\Fill DimClinics Task"
+          DTS:LogicalAnd="True"
+          DTS:ObjectName="Constraint 4"
+          DTS:To="Package\OLTP To Data Warehouse Sequence Container\Fill DimProcedures Task" />
+        <DTS:PrecedenceConstraint
+          DTS:refId="Package\OLTP To Data Warehouse Sequence Container.PrecedenceConstraints[Constraint 5]"
+          DTS:CreationName=""
+          DTS:DTSID="{6CF81FFE-7273-4EC2-9210-90C4D1187D41}"
+          DTS:From="Package\OLTP To Data Warehouse Sequence Container\Fill DimProcedures Task"
+          DTS:LogicalAnd="True"
+          DTS:ObjectName="Constraint 5"
+          DTS:To="Package\OLTP To Data Warehouse Sequence Container\Fill DimShifts Task" />
+        <DTS:PrecedenceConstraint
+          DTS:refId="Package\OLTP To Data Warehouse Sequence Container.PrecedenceConstraints[Constraint 6]"
+          DTS:CreationName=""
+          DTS:DTSID="{1177BFAA-FF1B-449E-B13D-24DF86156A1C}"
+          DTS:From="Package\OLTP To Data Warehouse Sequence Container\Fill DimShifts Task"
+          DTS:LogicalAnd="True"
+          DTS:ObjectName="Constraint 6"
+          DTS:To="Package\OLTP To Data Warehouse Sequence Container\Fill DimDates Task" />
+        <DTS:PrecedenceConstraint
+          DTS:refId="Package\OLTP To Data Warehouse Sequence Container.PrecedenceConstraints[Constraint 7]"
+          DTS:CreationName=""
+          DTS:DTSID="{09FB9A3A-D42F-4903-B240-6EFBDE1582F8}"
+          DTS:From="Package\OLTP To Data Warehouse Sequence Container\Fill DimDates Task"
+          DTS:LogicalAnd="True"
+          DTS:ObjectName="Constraint 7"
+          DTS:To="Package\OLTP To Data Warehouse Sequence Container\Fill DimPatients Task" />
+        <DTS:PrecedenceConstraint
+          DTS:refId="Package\OLTP To Data Warehouse Sequence Container.PrecedenceConstraints[Constraint 8]"
+          DTS:CreationName=""
+          DTS:DTSID="{F5BF3DFF-8982-431D-ABEC-D9FC465CF1CB}"
+          DTS:From="Package\OLTP To Data Warehouse Sequence Container\Fill DimPatients Task"
+          DTS:LogicalAnd="True"
+          DTS:ObjectName="Constraint 8"
+          DTS:To="Package\OLTP To Data Warehouse Sequence Container\Fill FactDoctorShifts Task" />
+        <DTS:PrecedenceConstraint
+          DTS:refId="Package\OLTP To Data Warehouse Sequence Container.PrecedenceConstraints[Constraint 9]"
+          DTS:CreationName=""
+          DTS:DTSID="{95F61267-21D4-4583-8230-6E882A214007}"
+          DTS:From="Package\OLTP To Data Warehouse Sequence Container\Fill FactDoctorShifts Task"
+          DTS:LogicalAnd="True"
+          DTS:ObjectName="Constraint 9"
+          DTS:To="Package\OLTP To Data Warehouse Sequence Container\Fill FactVisits Task" />
+      </DTS:PrecedenceConstraints>
+    </DTS:Executable>
+  </DTS:Executables>
+  <DTS:PrecedenceConstraints>
+    <DTS:PrecedenceConstraint
+      DTS:refId="Package.PrecedenceConstraints[Constraint]"
+      DTS:CreationName=""
+      DTS:DTSID="{2D008425-C970-47DF-B2A5-CB3ACDE85EA2}"
+      DTS:From="Package\CSV TO OLTP Sequence Container"
+      DTS:LogicalAnd="True"
+      DTS:ObjectName="Constraint"
+      DTS:To="Package\OLTP To Data Warehouse Sequence Container" />
+  </DTS:PrecedenceConstraints>
+  <DTS:DesignTimeProperties><![CDATA[<?xml version="1.0"?>
+<!--This CDATA section contains the layout information of the package. The section includes information such as (x,y) coordinates, width, and height.-->
+<!--If you manually edit this section and make a mistake, you can delete it. -->
+<!--The package will still be able to load normally but the previous layout information will be lost and the designer will automatically re-arrange the elements on the design surface.-->
+<Objects
+  Version="8">
+  <!--Each node below will contain properties that do not affect runtime behavior.-->
+  <Package
+    design-time-name="Package">
+    <LayoutInfo>
+      <GraphLayout
+        Capacity="64" xmlns="clr-namespace:Microsoft.SqlServer.IntegrationServices.Designer.Model.Serialization;assembly=Microsoft.SqlServer.IntegrationServices.Graph" xmlns:mssgle="clr-namespace:Microsoft.SqlServer.Graph.LayoutEngine;assembly=Microsoft.SqlServer.Graph" xmlns:assembly="http://schemas.microsoft.com/winfx/2006/xaml">
+        <NodeLayout
+          Size="233,42"
+          Id="Package\CSV TO OLTP Sequence Container\Create New Visit Data View Task"
+          TopLeft="49,146" />
+        <NodeLayout
+          Size="249,42"
+          Id="Package\CSV TO OLTP Sequence Container\Create Or Clear Staging Tables Task"
+          TopLeft="38,13" />
+        <NodeLayout
+          Size="272,42"
+          Id="Package\CSV TO OLTP Sequence Container\Import CSV Data To Staging Tables Task"
+          TopLeft="48,81" />
+        <NodeLayout
+          Size="253,42"
+          Id="Package\CSV TO OLTP Sequence Container\Import New Visit Data To Table Task"
+          TopLeft="41,213" />
+        <EdgeLayout
+          Id="Package\CSV TO OLTP Sequence Container.PrecedenceConstraints[Constraint]"
+          TopLeft="162.5,55">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="21.5,26"
+              Start="0,0"
+              End="21.5,18.5">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,9" />
+                  <mssgle:CubicBezierSegment
+                    Point1="0,9"
+                    Point2="0,13"
+                    Point3="4,13" />
+                  <mssgle:LineSegment
+                    End="17.5,13" />
+                  <mssgle:CubicBezierSegment
+                    Point1="17.5,13"
+                    Point2="21.5,13"
+                    Point3="21.5,17" />
+                  <mssgle:LineSegment
+                    End="21.5,18.5" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\CSV TO OLTP Sequence Container.PrecedenceConstraints[Constraint 1]"
+          TopLeft="184,123">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="-18.5,23"
+              Start="0,0"
+              End="-18.5,15.5">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,7.5" />
+                  <mssgle:CubicBezierSegment
+                    Point1="0,7.5"
+                    Point2="0,11.5"
+                    Point3="-4,11.5" />
+                  <mssgle:LineSegment
+                    End="-14.5,11.5" />
+                  <mssgle:CubicBezierSegment
+                    Point1="-14.5,11.5"
+                    Point2="-18.5,11.5"
+                    Point3="-18.5,15.5" />
+                  <mssgle:LineSegment
+                    End="-18.5,15.5" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\CSV TO OLTP Sequence Container.PrecedenceConstraints[Constraint 2]"
+          TopLeft="166.5,188">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,25"
+              Start="0,0"
+              End="0,17.5">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,17.5" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <ContainerLayout
+          HeaderHeight="43"
+          IsExpanded="True"
+          PanelSize="360,313"
+          Size="360,356"
+          Id="Package\CSV TO OLTP Sequence Container"
+          TopLeft="111,38" />
+        <NodeLayout
+          Size="186,42"
+          Id="Package\OLTP To Data Warehouse Sequence Container\Add Foreign Keys Task"
+          TopLeft="81,823" />
+        <NodeLayout
+          Size="202,42"
+          Id="Package\OLTP To Data Warehouse Sequence Container\Check Existence Task"
+          TopLeft="27,20" />
+        <NodeLayout
+          Size="202,42"
+          Id="Package\OLTP To Data Warehouse Sequence Container\Drop Foreign Keys Task"
+          TopLeft="32,91" />
+        <NodeLayout
+          Size="198,42"
+          Id="Package\OLTP To Data Warehouse Sequence Container\Fill DimClinics Task"
+          TopLeft="31,301" />
+        <NodeLayout
+          Size="183,42"
+          Id="Package\OLTP To Data Warehouse Sequence Container\Fill DimDates Task"
+          TopLeft="55,525" />
+        <NodeLayout
+          Size="198,42"
+          Id="Package\OLTP To Data Warehouse Sequence Container\Fill DimDoctors Task"
+          TopLeft="30,232" />
+        <NodeLayout
+          Size="176,42"
+          Id="Package\OLTP To Data Warehouse Sequence Container\Fill DimPatients Task"
+          TopLeft="59,594" />
+        <NodeLayout
+          Size="191,42"
+          Id="Package\OLTP To Data Warehouse Sequence Container\Fill DimProcedures Task"
+          TopLeft="27,371" />
+        <NodeLayout
+          Size="165,42"
+          Id="Package\OLTP To Data Warehouse Sequence Container\Fill DimShifts Task"
+          TopLeft="45,444" />
+        <NodeLayout
+          Size="197,42"
+          Id="Package\OLTP To Data Warehouse Sequence Container\Fill FactDoctorShifts Task"
+          TopLeft="54,663" />
+        <NodeLayout
+          Size="163,42"
+          Id="Package\OLTP To Data Warehouse Sequence Container\Fill FactVisits Task"
+          TopLeft="56,741" />
+        <NodeLayout
+          Size="180,42"
+          Id="Package\OLTP To Data Warehouse Sequence Container\Truncate Tables Task"
+          TopLeft="34,160" />
+        <EdgeLayout
+          Id="Package\OLTP To Data Warehouse Sequence Container.PrecedenceConstraints[Constraint]"
+          TopLeft="130.5,62">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,29"
+              Start="0,0"
+              End="0,21.5">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,21.5" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\OLTP To Data Warehouse Sequence Container.PrecedenceConstraints[Constraint 1]"
+          TopLeft="133,133">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="-9,27"
+              Start="0,0"
+              End="-9,19.5">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,9.5" />
+                  <mssgle:CubicBezierSegment
+                    Point1="0,9.5"
+                    Point2="0,13.5"
+                    Point3="-4,13.5" />
+                  <mssgle:LineSegment
+                    End="-5,13.5" />
+                  <mssgle:CubicBezierSegment
+                    Point1="-5,13.5"
+                    Point2="-9,13.5"
+                    Point3="-9,17.5" />
+                  <mssgle:LineSegment
+                    End="-9,19.5" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\OLTP To Data Warehouse Sequence Container.PrecedenceConstraints[Constraint 10]"
+          TopLeft="137.5,783">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="36.5,40"
+              Start="0,0"
+              End="36.5,32.5">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,16" />
+                  <mssgle:CubicBezierSegment
+                    Point1="0,16"
+                    Point2="0,20"
+                    Point3="4,20" />
+                  <mssgle:LineSegment
+                    End="32.5,20" />
+                  <mssgle:CubicBezierSegment
+                    Point1="32.5,20"
+                    Point2="36.5,20"
+                    Point3="36.5,24" />
+                  <mssgle:LineSegment
+                    End="36.5,32.5" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\OLTP To Data Warehouse Sequence Container.PrecedenceConstraints[Constraint 2]"
+          TopLeft="126.5,202">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,30"
+              Start="0,0"
+              End="0,22.5">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,22.5" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\OLTP To Data Warehouse Sequence Container.PrecedenceConstraints[Constraint 3]"
+          TopLeft="129.5,274">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,27"
+              Start="0,0"
+              End="0,19.5">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,19.5" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\OLTP To Data Warehouse Sequence Container.PrecedenceConstraints[Constraint 4]"
+          TopLeft="126.25,343">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,28"
+              Start="0,0"
+              End="0,20.5">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,20.5" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\OLTP To Data Warehouse Sequence Container.PrecedenceConstraints[Constraint 5]"
+          TopLeft="125,413">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,31"
+              Start="0,0"
+              End="0,23.5">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,23.5" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\OLTP To Data Warehouse Sequence Container.PrecedenceConstraints[Constraint 6]"
+          TopLeft="127.5,486">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="19,39"
+              Start="0,0"
+              End="19,31.5">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,15.5" />
+                  <mssgle:CubicBezierSegment
+                    Point1="0,15.5"
+                    Point2="0,19.5"
+                    Point3="4,19.5" />
+                  <mssgle:LineSegment
+                    End="15,19.5" />
+                  <mssgle:CubicBezierSegment
+                    Point1="15,19.5"
+                    Point2="19,19.5"
+                    Point3="19,23.5" />
+                  <mssgle:LineSegment
+                    End="19,31.5" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\OLTP To Data Warehouse Sequence Container.PrecedenceConstraints[Constraint 7]"
+          TopLeft="146.75,567">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,27"
+              Start="0,0"
+              End="0,19.5">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,19.5" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\OLTP To Data Warehouse Sequence Container.PrecedenceConstraints[Constraint 8]"
+          TopLeft="149.75,636">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,27"
+              Start="0,0"
+              End="0,19.5">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,19.5" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <EdgeLayout
+          Id="Package\OLTP To Data Warehouse Sequence Container.PrecedenceConstraints[Constraint 9]"
+          TopLeft="152.5,705">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="-15,36"
+              Start="0,0"
+              End="-15,28.5">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,14" />
+                  <mssgle:CubicBezierSegment
+                    Point1="0,14"
+                    Point2="0,18"
+                    Point3="-4,18" />
+                  <mssgle:LineSegment
+                    End="-11,18" />
+                  <mssgle:CubicBezierSegment
+                    Point1="-11,18"
+                    Point2="-15,18"
+                    Point3="-15,22" />
+                  <mssgle:LineSegment
+                    End="-15,28.5" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+        <ContainerLayout
+          HeaderHeight="43"
+          IsExpanded="True"
+          PanelSize="351,920"
+          Size="351,963"
+          Id="Package\OLTP To Data Warehouse Sequence Container"
+          TopLeft="114,427" />
+        <EdgeLayout
+          Id="Package.PrecedenceConstraints[Constraint]"
+          TopLeft="290.25,394">
+          <EdgeLayout.Curve>
+            <mssgle:Curve
+              StartConnector="{assembly:Null}"
+              EndConnector="0,33"
+              Start="0,0"
+              End="0,25.5">
+              <mssgle:Curve.Segments>
+                <mssgle:SegmentCollection
+                  Capacity="5">
+                  <mssgle:LineSegment
+                    End="0,25.5" />
+                </mssgle:SegmentCollection>
+              </mssgle:Curve.Segments>
+            </mssgle:Curve>
+          </EdgeLayout.Curve>
+          <EdgeLayout.Labels>
+            <EdgeLabelCollection />
+          </EdgeLayout.Labels>
+        </EdgeLayout>
+      </GraphLayout>
+    </LayoutInfo>
+  </Package>
+</Objects>]]></DTS:DesignTimeProperties>
+</DTS:Executable>
